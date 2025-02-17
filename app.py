@@ -5,6 +5,7 @@ from tensorflow.keras.preprocessing import image
 from PIL import Image
 from gtts import gTTS  # Google Text-to-Speech
 import tempfile
+import os
 
 # Load the trained model
 MODEL_PATH = "vgg16_model.h5"
@@ -55,8 +56,9 @@ if uploaded_file is not None:
     # Generate speech and get path
     audio_path = speak(predicted_class)
     
-    # Display audio player
-    st.audio(audio_path, format="audio/mp3")
-
+    # Play audio automatically after classification
+    audio_file = open(audio_path, 'rb')
+    st.audio(audio_file, format="audio/mp3")
+    
     # Clean up temporary file after use
     os.remove(audio_path)
