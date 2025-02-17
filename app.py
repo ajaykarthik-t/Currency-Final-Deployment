@@ -58,7 +58,7 @@ if uploaded_file is not None:
     
     # Play audio automatically after classification
     audio_file = open(audio_path, 'rb')
-    st.audio(audio_file, format="audio/mp3")
+    st.audio(audio_file, format="audio/mp3", autoplay=True)  # Autoplay set to True
     
     # Clean up temporary file after use
     os.remove(audio_path)
