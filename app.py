@@ -3,7 +3,8 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.preprocessing import image
 from PIL import Image
-import pyttsx3  # For text-to-speech
+from gtts import gTTS  # Google Text-to-Speech
+import os
 
 # Load the trained model
 MODEL_PATH = "vgg16_model.h5"
@@ -31,14 +32,16 @@ def predict_class(img):
     predicted_label = list(class_labels.keys())[class_id]
     return class_labels[predicted_label]
 
-def speak(text):
-    engine = pyttsx3.init()
-    engine.say(text)
-    engine.runAndWait()
+def generate_audio(text):
+    """Generate an audio file from text using gTTS"""
+    tts = gTTS(text=text, lang="en")
+    audio_file = "prediction.mp3"
+    tts.save(audio_file)
+    return audio_file
 
 # Streamlit UI
 st.title("Currency Note Classification for the Visually Impaired")
-st.write("Upload an image of a currency note, and the app will predict its class and announce it.")
+st.write("Upload an image of a currency note, and the app will predict its class and provide an audio response.")
 
 uploaded_file = st.file_uploader("Upload an Image", type=["jpg", "jpeg", "png"])
 
@@ -49,4 +52,7 @@ if uploaded_file is not None:
     predicted_class = predict_class(image_data)
     st.write(f"**Predicted Class:** {predicted_class}")
     
-    speak(predicted_class)
+    # Generate and provide an audio file for download
+    audio_file = generate_audio(predicted_class)
+    with open(audio_file, "rb") as file:
+        st.download_button(label="🔊 Download Prediction Audio", data=file, file_name="prediction.mp3", mime="audio/mp3")
