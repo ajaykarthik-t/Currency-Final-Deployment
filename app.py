@@ -53,9 +53,20 @@ if uploaded_file is not None:
     predicted_class = predict_class(image_data)
     st.write(f"**Predicted Class:** {predicted_class}")
     
-    # Generate speech and play it
+    # Generate speech and get path
     audio_path = speak(predicted_class)
-    st.audio(audio_path, format="audio/mp3")
     
-    # Clean up temporary audio file
+    # Display audio player
+    audio_element = f"""
+        <audio id="audio-player" autoplay>
+            <source src="{audio_path}" type="audio/mp3">
+        </audio>
+        <script>
+            var audio = document.getElementById("audio-player");
+            audio.play();
+        </script>
+    """
+    st.markdown(audio_element, unsafe_allow_html=True)
+
+    # Clean up temporary file
     os.remove(audio_path)
