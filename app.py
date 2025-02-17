@@ -3,7 +3,9 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.preprocessing import image
 from PIL import Image
-import pyttsx3  # For text-to-speech
+from gtts import gTTS  # Google Text-to-Speech
+import os
+import tempfile
 
 # Load the trained model
 MODEL_PATH = "vgg16_model.h5"
@@ -32,9 +34,11 @@ def predict_class(img):
     return class_labels[predicted_label]
 
 def speak(text):
-    engine = pyttsx3.init()
-    engine.say(text)
-    engine.runAndWait()
+    """Convert text to speech and return audio file path."""
+    tts = gTTS(text=text, lang='en')  # Generate speech
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")  # Create temp file
+    tts.save(temp_file.name)  # Save speech
+    return temp_file.name  # Return path to speech file
 
 # Streamlit UI
 st.title("Currency Note Classification for the Visually Impaired")
@@ -49,4 +53,9 @@ if uploaded_file is not None:
     predicted_class = predict_class(image_data)
     st.write(f"**Predicted Class:** {predicted_class}")
     
-    speak(predicted_class)
+    # Generate speech and play it
+    audio_path = speak(predicted_class)
+    st.audio(audio_path, format="audio/mp3")
+    
+    # Clean up temporary audio file
+    os.remove(audio_path)
