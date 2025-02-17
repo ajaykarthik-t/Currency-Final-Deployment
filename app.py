@@ -4,7 +4,6 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing import image
 from PIL import Image
 from gtts import gTTS  # Google Text-to-Speech
-import os
 import tempfile
 
 # Load the trained model
@@ -57,16 +56,7 @@ if uploaded_file is not None:
     audio_path = speak(predicted_class)
     
     # Display audio player
-    audio_element = f"""
-        <audio id="audio-player" autoplay>
-            <source src="{audio_path}" type="audio/mp3">
-        </audio>
-        <script>
-            var audio = document.getElementById("audio-player");
-            audio.play();
-        </script>
-    """
-    st.markdown(audio_element, unsafe_allow_html=True)
+    st.audio(audio_path, format="audio/mp3")
 
-    # Clean up temporary file
+    # Clean up temporary file after use
     os.remove(audio_path)
